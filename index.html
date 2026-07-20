@@ -164,9 +164,9 @@
     color:var(--navy);
   }
 
-  .img-cell{
-    width:78px;
-    height:78px;
+  .img-box{
+    width:56px;
+    height:56px;
     margin:0 auto;
     border:2px dashed var(--accent);
     border-radius:8px;
@@ -178,10 +178,10 @@
     overflow:hidden;
     position:relative;
   }
-  .img-cell img{width:100%; height:100%; object-fit:cover;}
-  .img-cell .hint{font-size:9px; color:var(--accent); text-align:center; padding:2px; line-height:1.2;}
-  .img-cell input[type="file"]{display:none;}
-  .img-cell .remove-x{
+  .img-box img{width:100%; height:100%; object-fit:cover;}
+  .img-box .hint{font-size:9px; color:var(--accent); text-align:center; padding:2px; line-height:1.2;}
+  .img-box input[type="file"]{display:none;}
+  .img-box .remove-x{
     position:absolute; top:2px; right:2px;
     background:rgba(192,57,43,0.9); color:#fff;
     border-radius:50%; width:16px; height:16px;
@@ -190,21 +190,6 @@
   }
 
   .table-tools{margin-top:14px; display:flex; gap:10px;}
-
-  .patches-block{
-    margin-top:32px;
-    padding-top:22px;
-    border-top:2px solid var(--line);
-  }
-  .patches-block h3{color:var(--navy); font-size:22px; margin:0 0 4px 0;}
-  .patches-block p{color:var(--muted); font-size:13px; margin:0 0 16px 0;}
-  .patches-grid{display:flex; gap:22px; flex-wrap:wrap;}
-  .patch-card{
-    width:160px;
-    text-align:center;
-  }
-  .patch-card .img-cell{width:140px; height:140px;}
-  .patch-card .patch-label{margin-top:8px; font-weight:700; color:var(--navy); font-size:14px;}
 
   footer{
     text-align:center;
@@ -216,7 +201,7 @@
   @media (max-width:900px){
     .panel{padding:16px;}
     table.order-table{font-size:11px;}
-    .img-cell{width:56px; height:56px;}
+    .img-box{width:44px; height:44px;}
   }
 
   /* Print / PDF export view */
@@ -298,7 +283,12 @@
         <thead>
           <tr>
             <th rowspan="2" data-i18n="col_imagen">Imagen</th>
+            <th rowspan="2" data-i18n="patch_1">Parche 1</th>
+            <th rowspan="2" data-i18n="patch_2">Parche 2</th>
+            <th rowspan="2" data-i18n="patch_3">Parche 3</th>
             <th rowspan="2" data-i18n="col_modelo">Modelo / Color</th>
+            <th rowspan="2" data-i18n="col_nombre">Nombre</th>
+            <th rowspan="2" data-i18n="col_numero">Número</th>
             <th class="group-head" colspan="7" data-i18n="group_nino">Talla Niño</th>
             <th class="group-head" colspan="7" data-i18n="group_adulto">Talla Adulto</th>
             <th rowspan="2" data-i18n="col_total">Total</th>
@@ -318,34 +308,6 @@
     </div>
     <div class="table-tools">
       <button class="btn btn-add add-row-btn" data-target="camisetas" data-i18n="btn_add_row">+ Agregar fila</button>
-    </div>
-
-    <div class="patches-block">
-      <h3 data-i18n="patches_title">Parches</h3>
-      <p data-i18n="patches_sub">Sube aquí las imágenes de los parches disponibles para personalizar las camisetas.</p>
-      <div class="patches-grid">
-        <div class="patch-card">
-          <div class="img-cell" data-role="patch-upload">
-            <span class="hint" data-i18n="upload_hint">Subir imagen</span>
-            <input type="file" accept="image/*">
-          </div>
-          <div class="patch-label" data-i18n="patch_1">Parche 1</div>
-        </div>
-        <div class="patch-card">
-          <div class="img-cell" data-role="patch-upload">
-            <span class="hint" data-i18n="upload_hint">Subir imagen</span>
-            <input type="file" accept="image/*">
-          </div>
-          <div class="patch-label" data-i18n="patch_2">Parche 2</div>
-        </div>
-        <div class="patch-card">
-          <div class="img-cell" data-role="patch-upload">
-            <span class="hint" data-i18n="upload_hint">Subir imagen</span>
-            <input type="file" accept="image/*">
-          </div>
-          <div class="patch-label" data-i18n="patch_3">Parche 3</div>
-        </div>
-      </div>
     </div>
   </section>
 
@@ -397,7 +359,7 @@ const translations = {
     title_zapatos:"Pedido de Zapatos", title_camisetas:"Pedido de Camisetas", title_perfumes:"Pedido de Perfumes y Relojes",
     subtitle_generic:"Sube la foto del modelo y anota la cantidad por talla.",
     subtitle_perfumes:"Sube la imagen del producto y anota ML/modelo y cantidad.",
-    col_imagen:"Imagen", col_modelo:"Modelo / Color", col_total:"Total",
+    col_imagen:"Imagen", col_modelo:"Modelo / Color", col_nombre:"Nombre", col_numero:"Número", col_total:"Total",
     col_producto:"Producto", col_ml:"ML / Modelo", col_cantidad:"Cantidad", col_nota:"Nota",
     group_nino:"Talla Niño", group_adulto:"Talla Adulto",
     btn_add_row:"+ Agregar fila",
@@ -417,7 +379,7 @@ const translations = {
     title_zapatos:"Shoe Order", title_camisetas:"T-Shirt Order", title_perfumes:"Perfumes & Watches Order",
     subtitle_generic:"Upload the model photo and enter the quantity per size.",
     subtitle_perfumes:"Upload the product image and enter ML/model and quantity.",
-    col_imagen:"Image", col_modelo:"Model / Color", col_total:"Total",
+    col_imagen:"Image", col_modelo:"Model / Color", col_nombre:"Name", col_numero:"Number", col_total:"Total",
     col_producto:"Product", col_ml:"ML / Model", col_cantidad:"Quantity", col_nota:"Note",
     group_nino:"Kids Size", group_adulto:"Adult Size",
     btn_add_row:"+ Add row",
@@ -437,7 +399,7 @@ const translations = {
     title_zapatos:"鞋子订单", title_camisetas:"球衣订单", title_perfumes:"香水和手表订单",
     subtitle_generic:"上传款式照片并填写各尺码的数量。",
     subtitle_perfumes:"上传产品图片并填写毫升/型号和数量。",
-    col_imagen:"图片", col_modelo:"款式/颜色", col_total:"总数",
+    col_imagen:"图片", col_modelo:"款式/颜色", col_nombre:"姓名", col_numero:"号码", col_total:"总数",
     col_producto:"产品", col_ml:"毫升/型号", col_cantidad:"数量", col_nota:"备注",
     group_nino:"儿童尺码", group_adulto:"成人尺码",
     btn_add_row:"+ 添加一行",
@@ -474,6 +436,41 @@ document.getElementById("langSwitch").addEventListener("click", (e)=>{
   applyTranslations();
 });
 
+/* ---------------- Image upload cell builder ---------------- */
+// Each product/patch photo cell is a <td> containing a .img-box div.
+// IMPORTANT: display:flex must live on the inner div, never on the <td> itself —
+// putting it directly on a table cell breaks column layout in every browser.
+function makeImgCell(td){
+  td.classList.add("img-td");
+  renderEmptyBox(td);
+}
+
+function renderEmptyBox(td){
+  td.innerHTML = `<div class="img-box"><span class="hint" data-i18n="upload_hint">${translations[currentLang].upload_hint}</span><input type="file" accept="image/*"></div>`;
+  const box = td.querySelector(".img-box");
+  const input = box.querySelector("input[type=file]");
+  box.addEventListener("click", (e)=>{
+    if(e.target.matches("input[type=file]")) return;
+    input.click();
+  });
+  input.addEventListener("change", ()=>{
+    const file = input.files[0];
+    if(!file) return;
+    const reader = new FileReader();
+    reader.onload = (ev)=>{ renderFilledBox(td, ev.target.result); };
+    reader.readAsDataURL(file);
+  });
+}
+
+function renderFilledBox(td, dataUrl){
+  td.innerHTML = `<div class="img-box"><img src="${dataUrl}"><span class="remove-x">✕</span></div>`;
+  const box = td.querySelector(".img-box");
+  box.querySelector(".remove-x").addEventListener("click", (e)=>{
+    e.stopPropagation();
+    renderEmptyBox(td);
+  });
+}
+
 /* ---------------- Tabs ---------------- */
 document.getElementById("tabsNav").addEventListener("click",(e)=>{
   const btn = e.target.closest("button[data-tab]");
@@ -482,79 +479,6 @@ document.getElementById("tabsNav").addEventListener("click",(e)=>{
   btn.classList.add("active");
   document.querySelectorAll(".panel").forEach(p=>p.classList.remove("active"));
   document.getElementById("panel-"+btn.getAttribute("data-tab")).classList.add("active");
-});
-
-/* ---------------- Image upload cell builder ---------------- */
-function buildImgCell(){
-  const wrap = document.createElement("div");
-  wrap.className = "img-cell";
-  wrap.innerHTML = `<span class="hint" data-i18n="upload_hint">${translations[currentLang].upload_hint}</span><input type="file" accept="image/*">`;
-  const input = wrap.querySelector("input");
-  wrap.addEventListener("click", (e)=>{
-    if(e.target.tagName !== "INPUT") input.click();
-  });
-  input.addEventListener("change", ()=>{
-    const file = input.files[0];
-    if(!file) return;
-    const reader = new FileReader();
-    reader.onload = (ev)=>{
-      wrap.innerHTML = `<img src="${ev.target.result}"><span class="remove-x">✕</span><input type="file" accept="image/*" style="display:none;">`;
-      wrap.querySelector(".remove-x").addEventListener("click",(ev2)=>{
-        ev2.stopPropagation();
-        const newInput = wrap.querySelector("input");
-        newInput.value = "";
-        wrap.innerHTML = `<span class="hint" data-i18n="upload_hint">${translations[currentLang].upload_hint}</span><input type="file" accept="image/*">`;
-        wrap.querySelector("input").addEventListener("change", input._changeHandler);
-      });
-      const newInput = wrap.querySelector("input[type=file]");
-      newInput.addEventListener("change", input._changeHandler);
-    };
-    reader.readAsDataURL(file);
-  });
-  input._changeHandler = input.onchange || function(){};
-  return wrap;
-}
-
-/* generic re-bind: simpler approach - use event delegation instead */
-function makeImgCell(td){
-  td.classList.add("img-cell");
-  td.innerHTML = `<span class="hint" data-i18n="upload_hint">${translations[currentLang].upload_hint}</span><input type="file" accept="image/*" style="display:none;">`;
-  td.addEventListener("click",(e)=>{
-    if(e.target.matches("input[type=file]")) return;
-    if(e.target.classList.contains("remove-x")){
-      e.stopPropagation();
-      td.innerHTML = `<span class="hint" data-i18n="upload_hint">${translations[currentLang].upload_hint}</span><input type="file" accept="image/*" style="display:none;">`;
-      return;
-    }
-    td.querySelector("input[type=file]").click();
-  });
-  td.addEventListener("change",(e)=>{
-    if(!e.target.matches("input[type=file]")) return;
-    const file = e.target.files[0];
-    if(!file) return;
-    const reader = new FileReader();
-    reader.onload=(ev)=>{
-      td.innerHTML = `<img src="${ev.target.result}"><span class="remove-x">✕</span><input type="file" accept="image/*" style="display:none;">`;
-    };
-    reader.readAsDataURL(file);
-  });
-}
-
-// wire up the 3 patch cells already in the DOM
-document.querySelectorAll('[data-role="patch-upload"]').forEach(cell=>{
-  cell.addEventListener("click",(e)=>{
-    if(e.target.matches("input[type=file]")) return;
-    cell.querySelector("input[type=file]").click();
-  });
-  cell.querySelector("input[type=file]").addEventListener("change",(e)=>{
-    const file = e.target.files[0];
-    if(!file) return;
-    const reader = new FileReader();
-    reader.onload=(ev)=>{
-      cell.innerHTML = `<img src="${ev.target.result}">`;
-    };
-    reader.readAsDataURL(file);
-  });
 });
 
 /* ---------------- Row builders ---------------- */
@@ -594,7 +518,7 @@ function recalcFootCamisetas(){
     grand += parseFloat(tr.querySelector(".total-cell").textContent)||0;
   });
   const foot = document.getElementById("foot-camisetas");
-  let html = `<td colspan="2" data-i18n="total_general">${translations[currentLang].total_general}</td>`;
+  let html = `<td colspan="7" data-i18n="total_general">${translations[currentLang].total_general}</td>`;
   totals.forEach(t=> html += `<td>${t}</td>`);
   html += `<td class="total-cell">${grand}</td>`;
   foot.innerHTML = html;
@@ -649,10 +573,25 @@ function addRowCamisetas(prefill){
   makeImgCell(imgTd);
   tr.appendChild(imgTd);
 
+  for(let p=0;p<3;p++){
+    const patchTd = document.createElement("td");
+    makeImgCell(patchTd);
+    tr.appendChild(patchTd);
+  }
+
   const nameTd = document.createElement("td");
   nameTd.className = "name-cell";
   nameTd.innerHTML = `<input type="text" placeholder="${translations[currentLang].ph_modelo}" value="${prefill && prefill.name ? prefill.name : ''}">`;
   tr.appendChild(nameTd);
+
+  const jerseyNameTd = document.createElement("td");
+  jerseyNameTd.className = "name-cell";
+  jerseyNameTd.innerHTML = `<input type="text" value="${prefill && prefill.jerseyName ? prefill.jerseyName : ''}">`;
+  tr.appendChild(jerseyNameTd);
+
+  const jerseyNumberTd = document.createElement("td");
+  jerseyNumberTd.innerHTML = `<input type="text" value="${prefill && prefill.jerseyNumber ? prefill.jerseyNumber : ''}">`;
+  tr.appendChild(jerseyNumberTd);
 
   const sizeVals = (prefill && prefill.sizes) ? prefill.sizes : new Array(14).fill("");
   for(let i=0;i<14;i++){
@@ -717,7 +656,7 @@ document.querySelectorAll(".add-row-btn").forEach(btn=>{
 addRowZapatos({name:"Blanco / Plata", sizes:[21,13,21,15,14,21,72,8,89,89,20,90,48,22,12]});
 for(let i=0;i<5;i++) addRowZapatos();
 
-addRowCamisetas({name:"Jersey Local / Rojo", sizes:[4,6,5,4,3,2,1,10,18,24,20,12,6,2]});
+addRowCamisetas({name:"Jersey Local / Rojo", jerseyName:"Pérez", jerseyNumber:"10", sizes:[4,6,5,4,3,2,1,10,18,24,20,12,6,2]});
 for(let i=0;i<5;i++) addRowCamisetas();
 
 addRowPerfumes({name:"Perfume Bleu de Chanel", ml:"100 ml", qty:6});

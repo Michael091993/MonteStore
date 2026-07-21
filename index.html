@@ -204,6 +204,19 @@
     cursor:pointer;
   }
 
+  .split-img-box{
+    width:56px;
+    height:56px;
+    margin:0 auto;
+    border-radius:8px;
+    background:var(--bg-soft);
+    overflow:hidden;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+  .split-img-box img{width:100%; height:100%; object-fit:cover;}
+
   .table-tools{margin-top:14px; display:flex; gap:10px;}
 
   footer{
@@ -220,6 +233,8 @@
   }
 
   /* ---------------- Impresión / PDF (usa el diálogo nativo del navegador) ---------------- */
+  .print-only-split{display:none;}
+
   @media print{
     @page{ size: landscape; margin: 12mm; }
     body{ background:#fff; }
@@ -247,6 +262,21 @@
     table.order-table thead{display:table-header-group;}
     table.order-table tr{page-break-inside:avoid;}
     .img-box{border-style:solid;}
+
+    /* En Camisetas: ocultar la tabla combinada de pantalla y mostrar
+       las dos tablas separadas (Niño / Adulto) generadas para imprimir. */
+    #camisetasComboWrap{display:none;}
+    .print-only-split{display:block;}
+    .print-only-split .print-split-title{
+      font-family:'Bebas Neue', sans-serif;
+      font-size:20px;
+      color:var(--navy);
+      margin:0 0 8px 0;
+    }
+    .print-only-split .print-split-section + .print-split-section{
+      page-break-before:always;
+      padding-top:12mm;
+    }
   }
 </style>
 </head>
@@ -317,7 +347,7 @@
         <p data-i18n="subtitle_generic">Sube la foto del modelo y anota la cantidad por talla.</p>
       </div>
     </div>
-    <div style="overflow-x:auto;">
+    <div style="overflow-x:auto;" id="camisetasComboWrap">
       <table class="order-table" id="table-camisetas">
         <thead>
           <tr>
@@ -348,6 +378,10 @@
     <div class="table-tools">
       <button class="btn btn-add add-row-btn" data-target="camisetas" data-i18n="btn_add_row">+ Agregar fila</button>
     </div>
+
+    <!-- Solo se muestra al imprimir/exportar a PDF: la misma información,
+         separada en dos tablas (Niño / Adulto) que salen en páginas distintas. -->
+    <div id="camisetasPrintSplit" class="print-only-split"></div>
   </section>
 
   <!-- PERFUMES Y RELOJES -->
@@ -706,8 +740,101 @@ for(let i=0;i<5;i++) addRowCamisetas();
 addRowPerfumes({name:"Perfume Bleu de Chanel", ml:"100 ml", qty:6});
 for(let i=0;i<5;i++) addRowPerfumes();
 
+/* ---------------- Separar Camisetas en Niño / Adulto para imprimir ---------------- */
+function escapeHtml(str){
+  const div = document.createElement("div");
+  div.textContent = str ?? "";
+  return div.innerHTML;
+}
+
+function getImgSrc(td){
+  const img = td.querySelector("img");
+  return img ? img.src : null;
+}
+
+function buildSplitTableHTML(sectionTitle, rowsData, sizeLabels){
+  const t = translations[currentLang];
+  const theadSizes = sizeLabels.map(s=>`<th class="size-head">${s}</th>`).join("");
+  let bodyRows = "";
+  const colTotals = new Array(sizeLabels.length).fill(0);
+  let grandTotal = 0;
+  rowsData.forEach(r=>{
+    const rowTotal = r.sizes.reduce((a,b)=>a+b,0);
+    grandTotal += rowTotal;
+    r.sizes.forEach((v,i)=>{ colTotals[i] += v; });
+    const imgCellInner = r.imgSrc ? `<img src="${r.imgSrc}">` : "";
+    const patchCells = r.patchSrcs.map(src=>
+      `<td><div class="split-img-box">${src ? `<img src="${src}">` : ""}</div></td>`
+    ).join("");
+    bodyRows += `<tr>
+      <td><div class="split-img-box">${imgCellInner}</div></td>
+      ${patchCells}
+      <td class="name-cell">${escapeHtml(r.modelo)}</td>
+      <td class="name-cell">${escapeHtml(r.nombre)}</td>
+      <td>${escapeHtml(r.numero)}</td>
+      ${r.sizes.map(v=>`<td>${v || ""}</td>`).join("")}
+      <td class="total-cell">${rowTotal}</td>
+    </tr>`;
+  });
+  const footRow = `<tr>
+    <td colspan="7" style="font-weight:700;">${t.total_general}</td>
+    ${colTotals.map(v=>`<td style="font-weight:700;">${v}</td>`).join("")}
+    <td class="total-cell">${grandTotal}</td>
+  </tr>`;
+  return `
+    <div class="print-split-section">
+      <h3 class="print-split-title">${sectionTitle}</h3>
+      <table class="order-table">
+        <thead>
+          <tr>
+            <th class="img-head">${t.col_imagen}</th>
+            <th class="img-head">${t.patch_1}</th>
+            <th class="img-head">${t.patch_2}</th>
+            <th class="img-head">${t.patch_3}</th>
+            <th class="name-head">${t.col_modelo}</th>
+            <th class="name-head">${t.col_nombre}</th>
+            <th class="num-head">${t.col_numero}</th>
+            ${theadSizes}
+            <th class="total-head">${t.col_total}</th>
+          </tr>
+        </thead>
+        <tbody>${bodyRows}</tbody>
+        <tfoot>${footRow}</tfoot>
+      </table>
+    </div>`;
+}
+
+function buildCamisetasPrintSplit(){
+  const rows = document.querySelectorAll("#table-camisetas tbody tr");
+  const ninoRows = [];
+  const adultoRows = [];
+  rows.forEach(tr=>{
+    const tds = tr.children;
+    const imgSrc = getImgSrc(tds[0]);
+    const patchSrcs = [1,2,3].map(i=>getImgSrc(tds[i]));
+    const modelo = tds[4].querySelector("input").value;
+    const nombre = tds[5].querySelector("input").value;
+    const numero = tds[6].querySelector("input").value;
+    const sizeVals = Array.from(tr.querySelectorAll(".size-input")).map(i=>parseFloat(i.value)||0);
+    const rowBase = {imgSrc, patchSrcs, modelo, nombre, numero};
+    ninoRows.push({...rowBase, sizes: sizeVals.slice(0,7)});
+    adultoRows.push({...rowBase, sizes: sizeVals.slice(7,14)});
+  });
+  const t = translations[currentLang];
+  const ninoLabels = ["4","6","8","10","12","14","16"];
+  const adultoLabels = ["XS","S","M","L","XL","XXL","XXXL"];
+  const html =
+    buildSplitTableHTML(`${t.title_camisetas} — ${t.group_nino}`, ninoRows, ninoLabels) +
+    buildSplitTableHTML(`${t.title_camisetas} — ${t.group_adulto}`, adultoRows, adultoLabels);
+  document.getElementById("camisetasPrintSplit").innerHTML = html;
+}
+
 /* ---------------- Exportar a PDF (impresión nativa del navegador) ---------------- */
 document.getElementById("downloadPdfBtn").addEventListener("click", ()=>{
+  const activeTab = document.querySelector("#tabsNav button.active").getAttribute("data-tab");
+  if(activeTab === "camisetas"){
+    buildCamisetasPrintSplit();
+  }
   window.print();
 });
 
